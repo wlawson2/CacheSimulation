@@ -1,27 +1,29 @@
-#include "DirectMap.h"
+#include "FullyAssociative.h"
 
-DirectMap::DirectMap(int blckSize, int numBlcks, int nSets) {
+FullyAssociative::FullyAssociative(int blckSize, int numBlcks, int nSets, bool rep) {
     blockSize = blckSize;
     numBlocks = numBlcks;
     numSets = nSets;
+    lru = rep;
+    if (!lru)
+        replace = "FIFO";
+    else
+        replace = "LRU ";
     hits = 0;
     misses = 0;
     cacheSize = blockSize * numBlocks * numSets;
     offsetSize = log(blockSize) / log(2);
     numLines = cacheSize / blockSize;
-    for (int i = 0; i < numLines; i++) {
-        cacheLines.push_back(-1);
-    }
+
 }
 
-void DirectMap::Simulate(string inputFile) {
+void FullyAssociative::Simulate(string inputFile) {
     string memAddress;
     ifstream addressData(inputFile);
     bool isHit;
     string lineData;
     string address;
     if (addressData.is_open()) {
-        cout << inputFile << " successfully open.\n" << "Simulation running... \n";
         while (getline(addressData, lineData)) {
             string temp1 = lineData.substr(lineData.find(' ') + 1);
             string temp2 = temp1.substr(0, temp1.find(' '));
@@ -36,35 +38,59 @@ void DirectMap::Simulate(string inputFile) {
 
 }
 
-bool DirectMap::checkHit(string addressInHex) {
+bool FullyAssociative::checkHit(string addressInHex) {
+    bool hit = false;
+    int index;
     string address = HexToBin(addressInHex);
     string addressInBin = RemoveOffset(address);
     int tagNum = BinToDec(addressInBin);
-    return false;
-    if (cacheLines[tagNum%numLines] == tagNum)
-        return true;
-    else {
-        cacheLines[tagNum % numLines] = tagNum;
-        return false;
+    int front;
+    if (fifo.empty())
+        front = -1;
+    else
+        front=fifo.front();
+    for (int i = 0; i < fifo.size(); i++) {
+        if (fifo.at(i) == tagNum) {
+            hit = true;
+            index = i;
+        }
     }
+    if (lru) {
+        fifo.push_back(tagNum);
+        if (fifo.size() > numLines) {
+            if (hit)
+                fifo.erase(fifo.begin() + index);
+            else
+                fifo.pop_front();
+        }
+    }
+    else {
+        if (!hit) {
+            fifo.push_back(tagNum);
+            if (fifo.size() > numLines) {
+                fifo.pop_front();
+            }
+        }
+    }
+    return hit;
 }
 
-string DirectMap::RemoveOffset(string address) {
-    return address.substr(address.size()-offsetSize);
+string FullyAssociative::RemoveOffset(string address) {
+    return address.substr(0,address.size() - offsetSize);
 }
 
-int DirectMap::BinToDec(string bin) {
+int FullyAssociative::BinToDec(string bin) {
     int dec = 0;
     for (int i = 0; i < bin.size(); i++) {
         if (bin[i] == '1')
-            dec += pow(2, i);
+            dec += pow(2, bin.size()-i-1);
     }
     return dec;
 }
 
-string DirectMap::HexToBin(string hex) {
+string FullyAssociative::HexToBin(string hex) {
     string bin;
-    for (int i=0; i<hex.size(); i++) {
+    for (int i = 0; i < hex.size(); i++) {
         switch (hex[i]) {
         case '0':
             bin += "0000";

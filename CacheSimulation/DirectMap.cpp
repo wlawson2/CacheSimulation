@@ -9,9 +9,9 @@ DirectMap::DirectMap(int blckSize, int numBlcks, int nSets) {
     cacheSize = blockSize * numBlocks * numSets;
     offsetSize = log(blockSize) / log(2);
     numLines = cacheSize / blockSize;
-    for (int i = 0; i < numLines; i++) {
+    for (int i = 0; i < numLines; i++)
         cacheLines.push_back(-1);
-    }
+
 }
 
 void DirectMap::Simulate(string inputFile) {
@@ -21,7 +21,6 @@ void DirectMap::Simulate(string inputFile) {
     string lineData;
     string address;
     if (addressData.is_open()) {
-        cout << inputFile << " successfully open.\n" << "Simulation running... \n";
         while (getline(addressData, lineData)) {
             string temp1 = lineData.substr(lineData.find(' ') + 1);
             string temp2 = temp1.substr(0, temp1.find(' '));
@@ -40,9 +39,10 @@ bool DirectMap::checkHit(string addressInHex) {
     string address = HexToBin(addressInHex);
     string addressInBin = RemoveOffset(address);
     int tagNum = BinToDec(addressInBin);
-    return false;
-    if (cacheLines[tagNum%numLines] == tagNum)
+    int index = tagNum % numLines;
+    if (cacheLines.at(index) == tagNum) {
         return true;
+    }
     else {
         cacheLines[tagNum % numLines] = tagNum;
         return false;
@@ -50,14 +50,14 @@ bool DirectMap::checkHit(string addressInHex) {
 }
 
 string DirectMap::RemoveOffset(string address) {
-    return address.substr(address.size()-offsetSize);
+    return address.substr(0,address.size()-offsetSize);
 }
 
 int DirectMap::BinToDec(string bin) {
     int dec = 0;
     for (int i = 0; i < bin.size(); i++) {
         if (bin[i] == '1')
-            dec += pow(2, i);
+            dec += pow(2, bin.size()-i-1);
     }
     return dec;
 }

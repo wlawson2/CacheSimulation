@@ -18,13 +18,39 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cache.cpp">
+    <ClCompile Include="DirectMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FullyAssociative.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SetAssociative.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cache.h">
+    <ClInclude Include="DirectMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FullyAssociative.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SetAssociative.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Downloads\write02.trace">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\..\Downloads\swim.trace">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\..\Downloads\write01.trace">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\..\Downloads\read03.trace">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

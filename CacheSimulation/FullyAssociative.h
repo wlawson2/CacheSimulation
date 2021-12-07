@@ -3,21 +3,24 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <deque>
 using namespace std;
 
-struct DirectMap {
+struct FullyAssociative
+{
     int numSets;
     int numBlocks;
+    bool lru;
     int blockSize;
     int hits;
+    string replace;
     int misses;
     int numLines;
-    vector <int> cacheLines;
+    deque <int> fifo;
     int cacheSize;
     int offsetSize;
 
-    
-    DirectMap(int,int,int);
+    FullyAssociative(int, int, int, bool);
     string HexToBin(string);
     bool checkHit(string);
     string RemoveOffset(string);

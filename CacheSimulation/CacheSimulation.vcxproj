@@ -139,11 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cache.cpp" />
+    <ClCompile Include="DirectMap.cpp" />
+    <ClCompile Include="FullyAssociative.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SetAssociative.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cache.h" />
+    <ClInclude Include="DirectMap.h" />
+    <ClInclude Include="FullyAssociative.h" />
+    <ClInclude Include="SetAssociative.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Downloads\read03.trace" />
+    <None Include="..\..\..\..\Downloads\swim.trace" />
+    <None Include="..\..\..\..\Downloads\write01.trace" />
+    <None Include="..\..\..\..\Downloads\write02.trace" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

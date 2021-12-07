@@ -1,7 +1,12 @@
-#include "DirectMap.h"
+#include "SetAssociative.h"
 
-DirectMap::DirectMap(int blckSize, int numBlcks, int nSets) {
+SetAssociative::SetAssociative(int blckSize, int numBlcks, int nSets, bool rep) {
     blockSize = blckSize;
+    fifo = rep;
+    if (fifo)
+        replace = "FIFO";
+    else
+        replace = "LRU ";
     numBlocks = numBlcks;
     numSets = nSets;
     hits = 0;
@@ -9,19 +14,28 @@ DirectMap::DirectMap(int blckSize, int numBlcks, int nSets) {
     cacheSize = blockSize * numBlocks * numSets;
     offsetSize = log(blockSize) / log(2);
     numLines = cacheSize / blockSize;
-    for (int i = 0; i < numLines; i++) {
-        cacheLines.push_back(-1);
-    }
+    deque <int> q;
+    for (int i = 0; i < nSets; i++)
+        cacheLines.push_back(q);
 }
 
-void DirectMap::Simulate(string inputFile) {
+string SetAssociative::GetTag(string address) {
+    int setNS = log(numSets) / log(2);
+    return address.substr(0, address.size()-setNS);
+}
+
+string SetAssociative::GetSet(string address) {
+    int setNS = log(numSets) / log(2);
+    return address.substr(address.size() - setNS, address.size());
+}
+
+void SetAssociative::Simulate(string inputFile) {
     string memAddress;
     ifstream addressData(inputFile);
     bool isHit;
     string lineData;
     string address;
     if (addressData.is_open()) {
-        cout << inputFile << " successfully open.\n" << "Simulation running... \n";
         while (getline(addressData, lineData)) {
             string temp1 = lineData.substr(lineData.find(' ') + 1);
             string temp2 = temp1.substr(0, temp1.find(' '));
@@ -36,35 +50,50 @@ void DirectMap::Simulate(string inputFile) {
 
 }
 
-bool DirectMap::checkHit(string addressInHex) {
+bool SetAssociative::checkHit(string addressInHex) {
     string address = HexToBin(addressInHex);
     string addressInBin = RemoveOffset(address);
-    int tagNum = BinToDec(addressInBin);
-    return false;
-    if (cacheLines[tagNum%numLines] == tagNum)
-        return true;
-    else {
-        cacheLines[tagNum % numLines] = tagNum;
-        return false;
+    string tag = GetTag(addressInBin);
+    string set = GetSet(addressInBin);
+    int tagNum = BinToDec(tag);
+    int setN = BinToDec(set);
+    bool hit = false;
+    int index;
+    for (int i = 0; i < cacheLines[setN].size(); i++) {
+        if (cacheLines[setN].at(i) == tagNum) {
+            hit = true;
+            index = i;
+        }
     }
+    if (!fifo && hit) {
+        cacheLines[setN].erase(cacheLines[setN].begin() + index);
+        cacheLines[setN].push_back(tagNum);
+    }
+    if (!hit) {
+        cacheLines[setN].push_back(tagNum);
+        if (cacheLines[setN].size() > numBlocks) {
+            cacheLines[setN].pop_front();
+        }
+    }
+    return hit;
 }
 
-string DirectMap::RemoveOffset(string address) {
-    return address.substr(address.size()-offsetSize);
+string SetAssociative::RemoveOffset(string address) {
+    return address.substr(0,address.size() - offsetSize);
 }
 
-int DirectMap::BinToDec(string bin) {
+int SetAssociative::BinToDec(string bin) {
     int dec = 0;
     for (int i = 0; i < bin.size(); i++) {
         if (bin[i] == '1')
-            dec += pow(2, i);
+            dec += pow(2, bin.size()-i-1);
     }
     return dec;
 }
 
-string DirectMap::HexToBin(string hex) {
+string SetAssociative::HexToBin(string hex) {
     string bin;
-    for (int i=0; i<hex.size(); i++) {
+    for (int i = 0; i < hex.size(); i++) {
         switch (hex[i]) {
         case '0':
             bin += "0000";
