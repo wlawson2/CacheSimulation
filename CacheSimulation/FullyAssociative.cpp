@@ -1,6 +1,7 @@
 #include "FullyAssociative.h"
 
 FullyAssociative::FullyAssociative(int blckSize, int numBlcks, int nSets, bool rep) {
+    //set the caches values based on the parameters given in the constructor
     blockSize = blckSize;
     numBlocks = numBlcks;
     numSets = nSets;
@@ -11,6 +12,7 @@ FullyAssociative::FullyAssociative(int blckSize, int numBlcks, int nSets, bool r
         replace = "LRU ";
     hits = 0;
     misses = 0;
+    //Calculate the cache information based on the given parameters
     cacheSize = blockSize * numBlocks * numSets;
     offsetSize = log(blockSize) / log(2);
     numLines = cacheSize / blockSize;
@@ -39,6 +41,7 @@ void FullyAssociative::Simulate(string inputFile) {
 }
 
 bool FullyAssociative::checkHit(string addressInHex) {
+    //remove unnecessary parts of given address and convert to deimal
     bool hit = false;
     int index;
     string address = HexToBin(addressInHex);
@@ -49,12 +52,15 @@ bool FullyAssociative::checkHit(string addressInHex) {
         front = -1;
     else
         front=fifo.front();
+
+    //iterates through cache to check if the address is in the cache
     for (int i = 0; i < fifo.size(); i++) {
         if (fifo.at(i) == tagNum) {
             hit = true;
             index = i;
         }
     }
+    //moves address into back of the deque if the replacement method is least recently used
     if (lru) {
         fifo.push_back(tagNum);
         if (fifo.size() > numLines) {
@@ -64,6 +70,7 @@ bool FullyAssociative::checkHit(string addressInHex) {
                 fifo.pop_front();
         }
     }
+    //Inserts address into deque if it is a miss.
     else {
         if (!hit) {
             fifo.push_back(tagNum);
@@ -75,10 +82,12 @@ bool FullyAssociative::checkHit(string addressInHex) {
     return hit;
 }
 
+//removes offset from address since it is not necessary for checking the cache.
 string FullyAssociative::RemoveOffset(string address) {
     return address.substr(0,address.size() - offsetSize);
 }
 
+// Conversion functions to ease handling of addresses in binary
 int FullyAssociative::BinToDec(string bin) {
     int dec = 0;
     for (int i = 0; i < bin.size(); i++) {

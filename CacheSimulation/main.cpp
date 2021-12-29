@@ -8,16 +8,16 @@
 using namespace std;
 
 int main() {
-    
-    string fileName="gcc.trace";
-    string filePath = "C:/Users/wdlaw/Downloads/";
-    cout << fileName << " successfully open.\n" << "Simulation running... \n";
-    FullyAssociative fa(64, 64, 1, true);
-    fa.Simulate(filePath+fileName);
-    cout << (double)fa.hits / (fa.hits + fa.misses);
+    //declare and initialize file name and path.
+    cout << "Please input the name of a trace file not including the extension:" << endl;
+    string fileName;
+    cin >> fileName;
+    fileName += ".trace";
+    string filePath = "";
+    cout << filePath << fileName << " Simulation running... \n";
 
 
-    /*
+    //Declare fully associative caches of differing size and replacement method
     FullyAssociative fa1(4, 4, 1, false);
     FullyAssociative fa2(4, 4, 1, true);
     FullyAssociative fa3(4, 64, 1, false);
@@ -32,11 +32,11 @@ int main() {
     FullyAssociative fa12(64, 64, 1, false);
     cout << endl << endl << endl;
     
-    cout << "Fully Associative, gcc.trace" << endl;
+    //run the simulation on each fully associative cache and output the results.
+    cout << "Fully Associative, " << fileName << endl;
     cout << " Sets | Blocks / Set | Bytes / Block | Cache Size | Replacement| Hit Rate \n";
     fa1.Simulate(filePath + fileName);
     cout << "   " << fa1.numSets << "  |       " << fa1.numBlocks << "      |       " << fa1.blockSize << "       |     " << fa1.cacheSize << "     |     " << fa1.replace << "   |    " << (double)fa1.hits / (fa1.hits + fa1.misses) << endl;
-   
     fa2.Simulate(filePath + fileName);
     cout << "   " << fa2.numSets << "  |       " << fa2.numBlocks << "      |       " << fa2.blockSize << "       |     " << fa2.cacheSize << "     |     " << fa2.replace << "   |    " << (double)fa2.hits / (fa2.hits + fa2.misses) << endl;
     fa3.Simulate(filePath + fileName);
@@ -59,11 +59,9 @@ int main() {
     cout << "   " << fa11.numSets << "  |      " << fa11.numBlocks << "      |       " << fa11.blockSize << "       |   " << fa11.cacheSize << "    |     " << fa11.replace << "   |    " << (double)fa11.hits / (fa11.hits + fa11.misses) << endl;
     fa12.Simulate(filePath + fileName);
     cout << "   " << fa12.numSets << "  |      " << fa12.numBlocks << "      |       " << fa12.blockSize << "       |   " << fa12.cacheSize << "    |     " << fa12.replace << "   |    " << (double)fa12.hits / (fa12.hits + fa12.misses) << endl;
-
-
     cout << endl << endl << endl;
 
-
+    //Declare set associative caches of differing and replacement methods
     SetAssociative sa1(4, 4, 4, true);
     SetAssociative sa2(4, 4, 4, false);
     SetAssociative sa3(4, 4, 16, true);
@@ -81,7 +79,9 @@ int main() {
     SetAssociative sa15(64, 64, 64, true);
     SetAssociative sa16(64, 64, 64, false);
 
-    cout << "Set Associative, gcc.trace" << endl;
+
+    //run the simulation on each set associative cache and output the results.
+    cout << "Set Associative, " << fileName << endl;
     cout << " Sets | Blocks / Set | Bytes / Block | Cache Size | Replacement | Hit Rate \n";
     sa1.Simulate(filePath + fileName);
     cout << "   " << sa1.numSets << "  |       " << sa1.numBlocks << "      |       " << sa1.blockSize << "       |     " << sa1.cacheSize << "     |     "  << sa1.replace  << "   |    " << (double)sa1.hits / (sa1.hits + sa1.misses) << endl;
@@ -118,7 +118,7 @@ int main() {
 
     cout << endl << endl << endl;
 
-
+    //Declare direct mapped caches of differing size
     DirectMap dm1(4, 1, 4);
     DirectMap dm2(4, 1, 16);
     DirectMap dm3(4, 1, 64);
@@ -132,7 +132,9 @@ int main() {
     DirectMap dm11(64, 1, 64);
     DirectMap dm12(64, 1, 256);
     
-    cout << "Direct mapped, gcc.trace" << endl;
+
+    //run the simulation on each direct mapped cache and output the results.
+    cout << "Direct mapped, " << fileName << endl;
     cout << " Sets | Blocks / Set | Bytes / Block | Cache Size | Replacement | Hit Rate \n";
     dm1.Simulate(filePath + fileName);
     cout << "   " << dm1.numSets << "  |       " << dm1.numBlocks << "      |       " << dm1.blockSize  << "       |     "  << dm1.cacheSize << "     |     None    | " << (double)dm1.hits / (dm1.hits + dm1.misses) << endl;
@@ -158,5 +160,5 @@ int main() {
     cout << "   " << dm11.numSets << " |       " << dm11.numBlocks << "      |      " << dm11.blockSize << "       |    " << dm11.cacheSize << "    |     None    | " << (double)dm11.hits / (dm11.hits + dm11.misses) << endl;
     dm12.Simulate(filePath + fileName);
     cout << "  " << dm12.numSets << " |       " << dm12.numBlocks << "      |      " << dm12.blockSize << "       |    " << dm12.cacheSize << "   |     None    | " << (double)dm12.hits / (dm12.hits + dm12.misses) << endl;
-    */
+    
 }
